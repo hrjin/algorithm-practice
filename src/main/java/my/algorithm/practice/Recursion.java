@@ -22,8 +22,8 @@ public class Recursion {
 
         //recursion06(m);
 
-        int [] data = new int[]{1,32,52,13,43};
-        int length = data.length;
+        //int [] data = new int[]{1,32,52,13,43};
+        //int length = data.length;
         //int result = recursion07(length, data);
 
         //int target = 3;
@@ -31,9 +31,11 @@ public class Recursion {
 
         //int result = recursion09(0, 4, data);
 
-        int [] sortedData = new int[]{1,3,5,8,10};
-        int result = recursion10(sortedData, 8, 0, 4);
-        System.out.println(result);
+        //int [] sortedData = new int[]{1,3,5,8,10};
+        //int result = recursion10(sortedData, 8, 0, 4);
+
+        boolean result =  findPath(0, 2);
+        System.out.println("끝");
     }
 
     public static void recursion01(int k) {
@@ -145,4 +147,71 @@ public class Recursion {
         }
     }
 
+    public static boolean findPath(int x, int y) {
+        // 미로
+        int N = 5;
+        int [][] maze = new int[N][N];
+
+        // 랜덤하게 길 설정
+        for(int i=1; i < N; i++) {
+            for(int j=1; j < N; j++){
+                //Math.random()값이 0.XXXXX로 나오기 때문에 10을 곱하여 이 값중 5보다 크면
+                //1을 할당하고 작으면 0을 할당합니다..이렇게 함으로서 0,1만 출력 가능합니다.
+                if(Math.random()*10 > 5)
+                    maze[i][j] = 1;
+                else
+                    maze[i][j] = 0;
+            }
+        }
+
+        // 1) 기본 설정
+        int road = 0;
+        int blocked = 2; // visited 이지만 출구 가는 길이 없음.
+        int passRoad = 3; // visited 이고 출구 가는 방향이 있음.
+
+        if(x < 0 || y < 0 || x >= N || y >=N) {
+            return false;
+        } else if (maze[x][y] != road) { // 벽, 막힌 길
+            System.out.println("1 :: " + maze[x][y]);
+            return false;
+        } else if(x == N-1 && y == N-1){ // 출구
+            maze[x][y] = passRoad;
+            System.out.println("2 :: " + maze[x][y]);
+            return true;
+        } else {
+            maze[x][y] = passRoad;
+            System.out.println("3 :: " + maze[x][y]);
+            // 상(x, y-1), 하(x, y+1), 좌(x-1, y), 우(x+1, y)
+            if(findPath(x-1, y) || findPath(x+1, y) || findPath(x, y-1) || findPath(x, y+1)){
+                return true;
+            }
+            maze[x][y] = blocked;
+            return false;
+        }
+
+
+    }
+
+
+    // blob 수 구하기(인접한 픽셀 수)
+    public static int BACKGROUND_COLOR = 0;
+    public static int IMAGE_COLOR = 1;
+    public static int ALREADY_COUNTED = 2;
+
+    public int countCells(int x, int y) {
+        int N = 5;
+        int[][] grid = new int[N][N];
+
+        if(x < 0 || x >= N || y < 0 || y >= N)
+            return 0;
+        else if(grid[x][y] != IMAGE_COLOR)
+            return 0;
+        else {
+            grid[x][y] = ALREADY_COUNTED;
+            return 1 + countCells(x-1, y+1) + countCells(x, y+1)
+                    + countCells(x+1, y+1) + countCells(x-1, y)
+                    + countCells(x+1, y) + countCells(x-1, y-1)
+                    + countCells(x, y-1)+ countCells(x+1, y-1);
+        }
+    }
 }
